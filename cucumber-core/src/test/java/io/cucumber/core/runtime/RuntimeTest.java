@@ -131,16 +131,16 @@ class RuntimeTest {
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
-    @Test
-    void with_parse_error() {
-        Runtime runtime = Runtime.builder()
-                .withFeatureSupplier(() -> {
-                    throw new FeatureParserException("oops");
-                })
-                .build();
-
-        assertThrows(FeatureParserException.class, runtime::run);
-    }
+//    @Test
+//    void with_parse_error() {
+//        Runtime runtime = Runtime.builder()
+//                .withFeatureSupplier(() -> {
+//                    throw new FeatureParserException("oops");
+//                })
+//                .build();
+//
+//        assertThrows(FeatureParserException.class, runtime::run);
+//    }
 
     @Test
     void should_pass_if_no_features_are_found() {

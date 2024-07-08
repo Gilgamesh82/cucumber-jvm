@@ -54,6 +54,16 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         return features;
     }
 
+    @Override
+    public boolean isContinuous() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return false;
+    }
+
     private List<Feature> loadFeatures(List<URI> featurePaths) {
         log.debug(() -> "Loading features from " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
         final FeatureBuilder builder = new FeatureBuilder();

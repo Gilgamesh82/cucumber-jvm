@@ -22,4 +22,14 @@ public class StubFeatureSupplier implements FeatureSupplier {
         return features;
     }
 
+    @Override
+    public boolean isContinuous() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldStop() {
+        return false;
+    }
+
 }

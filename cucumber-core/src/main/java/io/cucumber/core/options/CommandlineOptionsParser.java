@@ -26,35 +26,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.cli.CommandlineOptions.COUNT;
-import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN;
-import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.GLUE;
-import static io.cucumber.core.cli.CommandlineOptions.GLUE_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.HELP;
-import static io.cucumber.core.cli.CommandlineOptions.HELP_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.I18N;
-import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME;
-import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.NAME;
-import static io.cucumber.core.cli.CommandlineOptions.NAME_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.NO_DRY_RUN;
-import static io.cucumber.core.cli.CommandlineOptions.NO_MONOCHROME;
-import static io.cucumber.core.cli.CommandlineOptions.NO_SUMMARY;
-import static io.cucumber.core.cli.CommandlineOptions.OBJECT_FACTORY;
-import static io.cucumber.core.cli.CommandlineOptions.ORDER;
-import static io.cucumber.core.cli.CommandlineOptions.PLUGIN;
-import static io.cucumber.core.cli.CommandlineOptions.PLUGIN_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.PUBLISH;
-import static io.cucumber.core.cli.CommandlineOptions.SNIPPETS;
-import static io.cucumber.core.cli.CommandlineOptions.TAGS;
-import static io.cucumber.core.cli.CommandlineOptions.TAGS_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.THREADS;
-import static io.cucumber.core.cli.CommandlineOptions.UUID_GENERATOR;
-import static io.cucumber.core.cli.CommandlineOptions.VERSION;
-import static io.cucumber.core.cli.CommandlineOptions.VERSION_SHORT;
-import static io.cucumber.core.cli.CommandlineOptions.WIP;
-import static io.cucumber.core.cli.CommandlineOptions.WIP_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.*;
 import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
 import static io.cucumber.core.options.UuidGeneratorParser.parseUuidGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -168,6 +140,8 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals(UUID_GENERATOR)) {
                 String uuidGeneratorClassName = removeArgFor(arg, args);
                 parsedOptions.setUuidGeneratorClass(parseUuidGenerator(uuidGeneratorClassName));
+            } else if (arg.equals(USER_INPUT) || arg.equals(USER_INPUT_SHORT)) {
+                parsedOptions.setEnableUserInputFeatureProvider(true);
             } else if (arg.startsWith("-")) {
                 out.println("Unknown option: " + arg);
                 printUsage();

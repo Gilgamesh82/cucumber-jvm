@@ -40,6 +40,7 @@ public final class RuntimeOptionsBuilder {
     private Boolean parsedPublish;
     private Boolean parsedPublishQuiet;
     private Boolean parsedEnablePublishPlugin;
+    private Boolean parsedEnableUserInputFeatureSupplier;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -166,6 +167,10 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setEnablePublishPlugin(parsedEnablePublishPlugin);
         }
 
+        if (parsedEnableUserInputFeatureSupplier != null) {
+            runtimeOptions.setEnableUserIntputFeatureProvider(parsedEnableUserInputFeatureSupplier);
+        }
+
         return runtimeOptions;
     }
 
@@ -267,6 +272,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder enablePublishPlugin() {
         this.parsedEnablePublishPlugin = true;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setEnableUserInputFeatureProvider(boolean enable) {
+        this.parsedEnableUserInputFeatureSupplier = enable;
         return this;
     }
 

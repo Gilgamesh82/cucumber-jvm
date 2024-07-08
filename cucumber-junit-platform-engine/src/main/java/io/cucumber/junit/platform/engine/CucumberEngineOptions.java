@@ -144,6 +144,11 @@ class CucumberEngineOptions implements
     }
 
     @Override
+    public boolean isUserInputFeatureSupplier() {
+        return false;
+    }
+
+    @Override
     public SnippetType getSnippetType() {
         return configurationParameters
                 .get(SNIPPET_TYPE_PROPERTY_NAME, SnippetTypeParser::parseSnippetType)

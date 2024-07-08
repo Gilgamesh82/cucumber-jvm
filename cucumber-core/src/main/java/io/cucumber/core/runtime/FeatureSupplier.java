@@ -8,4 +8,8 @@ public interface FeatureSupplier {
 
     List<Feature> get();
 
+    boolean isContinuous();
+
+    boolean shouldStop();
+
 }

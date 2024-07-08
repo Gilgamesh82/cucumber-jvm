@@ -74,8 +74,18 @@ public final class Runtime {
 
     public void run() {
         // Parse the features early. Don't proceed when there are lexer errors
-        List<Feature> features = featureSupplier.get();
-        context.runFeatures(() -> runFeatures(features));
+        if (featureSupplier.isContinuous()) {
+            while (!featureSupplier.shouldStop()) {
+                List<Feature> features = featureSupplier.get();
+                if (!features.isEmpty()) {
+                    context.runFeatures(() -> runFeatures(features));
+                }
+            }
+        }
+        else {
+            List<Feature> features = featureSupplier.get();
+            context.runFeatures(() -> runFeatures(features));
+        }
     }
 
     private void runFeatures(List<Feature> features) {
@@ -153,6 +163,10 @@ public final class Runtime {
             return this;
         }
 
+        public RuntimeOptions getRuntimeOptions() {
+            return this.runtimeOptions;
+        }
+
         public Runtime build() {
             final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
                 runtimeOptions);
@@ -199,7 +213,9 @@ public final class Runtime {
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
                     ? this.featureSupplier
-                    : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+                    : runtimeOptions.isUserInputFeatureSupplier()
+                        ? new UserInputFeatureSupplier(classLoader, runtimeOptions, parser)
+                        : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
             final Predicate<Pickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();

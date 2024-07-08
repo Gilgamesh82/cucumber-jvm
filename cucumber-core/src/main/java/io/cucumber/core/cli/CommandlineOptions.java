@@ -68,6 +68,9 @@ public final class CommandlineOptions {
 
     public static final String UUID_GENERATOR = "--uuid-generator";
 
+    public static final String USER_INPUT = "--user-input";
+    public static final String USER_INPUT_SHORT = "-u";
+
     private CommandlineOptions() {
     }
 }

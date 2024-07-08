@@ -13,6 +13,8 @@ public interface Options {
 
     boolean isDryRun();
 
+    boolean isUserInputFeatureSupplier();
+
     SnippetType getSnippetType();
 
     Class<? extends ObjectFactory> getObjectFactoryClass();

@@ -62,6 +62,7 @@ public final class RuntimeOptions implements
     // For context see: https://mattwynne.net/new-beginning
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
+    private boolean enableUserInputFeatureProvider;
 
     private RuntimeOptions() {
 
@@ -275,6 +276,15 @@ public final class RuntimeOptions implements
 
     void setEnablePublishPlugin(boolean enablePublishPlugin) {
         this.enablePublishPlugin = enablePublishPlugin;
+    }
+
+    void setEnableUserIntputFeatureProvider(boolean enableUserInputFeatureProvider) {
+        this.enableUserInputFeatureProvider = enableUserInputFeatureProvider;
+    }
+
+    @Override
+    public boolean isUserInputFeatureSupplier() {
+        return this.enableUserInputFeatureProvider;
     }
 
 }
