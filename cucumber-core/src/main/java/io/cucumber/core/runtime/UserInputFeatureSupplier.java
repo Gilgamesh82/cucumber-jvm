@@ -136,11 +136,11 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
 
         String prependText = "";
         if (needsFeatureTag) {
-            prependText += "Feature: Feature_" + currentTimeAsString + "\r\n";
+            prependText += "Feature: Feature_" + currentTimeAsString + System.lineSeparator();
         }
 
         if (needsScenarioTag) {
-            prependText += "Scenario: Scenario_" + currentTimeAsString + "\r\n";
+            prependText += "Scenario: Scenario_" + currentTimeAsString + System.lineSeparator();
         }
 
         // Add the prepend text to final text
