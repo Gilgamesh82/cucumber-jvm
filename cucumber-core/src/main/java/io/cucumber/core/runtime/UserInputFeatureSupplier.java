@@ -64,7 +64,6 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         // Create a JFrame?
         JFrame frame = new JFrame("Gherkin Input");
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setSize(new Dimension(640,480));
         frame.addWindowListener(this);
 
         JPanel panel = new JPanel();
@@ -72,12 +71,15 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         goButton.addActionListener(this);
         this.textArea = new JTextArea();
         this.textArea.setSize(640,480);
+        this.textArea.setRows(50);
+        this.textArea.setColumns(100);
         JScrollPane scrollPane = new JScrollPane(this.textArea);
 
         panel.add(this.textArea);
         panel.add(goButton);
         frame.add(panel);
 
+        frame.pack();
         frame.setVisible(true);
 
         this.featureScanner = new ResourceScanner<>(
@@ -112,16 +114,47 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
 
     private List<Feature> go() {
         // Grab the text and run it as a feature
+        String finalText = this.currentText;
+
+        boolean needsFeatureTag = false;
+        boolean needsScenarioTag = false;
+
+        // If the text does not have a feature, add a temp one
+        if (!finalText.contains("Feature:")) {
+            // Add a temp feature tag to the beginning
+            needsFeatureTag = true;
+        }
+
+        // If the text does not have a scenario, add a temp one
+        if (!finalText.contains("Scenario:")) {
+            needsScenarioTag = true;
+        }
+
+        // Get the current timestamp as a string
+        DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
+        String currentTimeAsString =  timeStampPattern.format(LocalDateTime.now());
+
+        String prependText = "";
+        if (needsFeatureTag) {
+            prependText += "Feature: Feature_" + currentTimeAsString + "\r\n";
+        }
+
+        if (needsScenarioTag) {
+            prependText += "Scenario: Scenario_" + currentTimeAsString + "\r\n";
+        }
+
+        // Add the prepend text to final text
+        finalText = prependText + finalText;
+
         // First, write the text to a temp file
-        DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String filePath =
                 System.getProperty("java.io.tmpdir") +
-                timeStampPattern.format(LocalDateTime.now()) +
+                currentTimeAsString +
                 ".feature";
         File tempFile = new File(filePath);
         try (FileWriter fw = new FileWriter(tempFile)) {
             // Write the file
-            fw.write(this.currentText);
+            fw.write(finalText);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
