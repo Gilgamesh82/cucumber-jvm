@@ -71,12 +71,14 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         JButton goButton = new JButton("Go");
         goButton.addActionListener(this);
         this.textArea = new JTextArea();
-        this.textArea.setSize(640,480);
+        this.textArea.setRows(50);
+        this.textArea.setColumns(100);
         JScrollPane scrollPane = new JScrollPane(this.textArea);
 
         panel.add(this.textArea);
         panel.add(goButton);
         frame.add(panel);
+        frame.pack();
 
         frame.setVisible(true);
 
@@ -113,15 +115,32 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
     private List<Feature> go() {
         // Grab the text and run it as a feature
         // First, write the text to a temp file
-        DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
+        String currentDateTimeString = timeStampPattern.format(LocalDateTime.now());
+
+        // If Feature or Scenario is missing, add them.
+        String updatedText = this.currentText;
+        String prependText = "";
+
+        if (!updatedText.contains("Feature:")) {
+            prependText += "Feature: feature_" + currentDateTimeString + System.lineSeparator();
+        }
+
+        // Assumption is that "Scenario" will never be missing without "Feature" also being missing.
+        if (!updatedText.contains("Scenario: ")) {
+            prependText += "Scenario: scenario_" + currentDateTimeString + System.lineSeparator();
+        }
+
+        updatedText = prependText + updatedText;
+
         String filePath =
                 System.getProperty("java.io.tmpdir") +
-                timeStampPattern.format(LocalDateTime.now()) +
+                currentDateTimeString +
                 ".feature";
         File tempFile = new File(filePath);
         try (FileWriter fw = new FileWriter(tempFile)) {
             // Write the file
-            fw.write(this.currentText);
+            fw.write(updatedText);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
