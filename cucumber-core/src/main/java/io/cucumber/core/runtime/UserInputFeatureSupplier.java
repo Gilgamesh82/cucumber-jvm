@@ -70,7 +70,6 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         JButton goButton = new JButton("Go");
         goButton.addActionListener(this);
         this.textArea = new JTextArea();
-        this.textArea.setSize(640,480);
         this.textArea.setRows(50);
         this.textArea.setColumns(100);
         JScrollPane scrollPane = new JScrollPane(this.textArea);
