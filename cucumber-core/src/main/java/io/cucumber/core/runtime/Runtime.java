@@ -98,6 +98,7 @@ public final class Runtime {
                 .limit(limit > 0 ? limit : Integer.MAX_VALUE)
                 .map(pickle -> executor.submit(executePickle(pickle)))
                 .collect(toList());
+        // TODO: Figure out why the above call fills out the result tree in some cases but not others
 
         executor.shutdown();
 
