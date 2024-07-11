@@ -8,7 +8,6 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ResourceScanner;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -16,28 +15,17 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.lang.management.OperatingSystemMXBean;
-import java.net.URI;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
-
-import io.cucumber.core.gherkin.Feature;
-
-import javax.swing.*;
-import java.util.List;
 
 //public final class UserInputFeatureSupplier implements FeatureSupplier {
 //    @Override
@@ -48,41 +36,22 @@ import java.util.List;
 
 public final class UserInputFeatureSupplier implements FeatureSupplier, ActionListener, WindowListener {
 
+    public String currentGherkinText = "";
+
     private static final Logger log = LoggerFactory.getLogger(UserInputFeatureSupplier.class);
 
     private final ResourceScanner<Feature> featureScanner;
 
-    private String currentText = "";
-
 //    private final JTextArea textArea;
+    private UserInputFeatureSupplierForm form = null;
 
     private boolean shouldReleaseGet = false;
 
     private volatile boolean stop = false;
 
     public UserInputFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions, FeatureParser parser) {
-//        // Create a JFrame?
-//        JFrame frame = new JFrame("Gherkin Input");
-//        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-//        frame.addWindowListener(this);
-//
-//        JPanel panel = new JPanel();
-//        JButton goButton = new JButton("Go");
-//        goButton.addActionListener(this);
-//        this.textArea = new JTextArea();
-//        this.textArea.setRows(50);
-//        this.textArea.setColumns(100);
-//        JScrollPane scrollPane = new JScrollPane(this.textArea);
-//
-//        panel.add(this.textArea);
-//        panel.add(goButton);
-//        frame.add(panel);
-//
-//        frame.pack();
-//        frame.setVisible(true);
-
-        UserInputFeatureSupplierForm form = new UserInputFeatureSupplierForm();
-        form.setVisible(true);
+        this.form = new UserInputFeatureSupplierForm(this);
+        this.form.setVisible(true);
 
         this.featureScanner = new ResourceScanner<>(
                 classLoader,
@@ -98,7 +67,7 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
             }
             this.shouldReleaseGet = false;
             if (!this.shouldStop()) {
-                return this.go();
+                return this.runGherkinContents();
             }
         }
         return List.of();
@@ -114,9 +83,9 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         return this.stop;
     }
 
-    private List<Feature> go() {
+    private List<Feature> runGherkinContents() {
         // Grab the text and run it as a feature
-        String finalText = this.currentText;
+        String finalText = this.form.gherkinTextArea.getText();
 
         boolean needsFeatureTag = false;
         boolean needsScenarioTag = false;
@@ -170,27 +139,11 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         return builder.build();
     }
 
-    private List<Feature> loadFeatures(List<URI> featurePaths) {
-        log.debug(() -> "Loading features from " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
-        final FeatureBuilder builder = new FeatureBuilder();
-
-        for (URI featurePath : featurePaths) {
-            List<Feature> found = featureScanner.scanForResourcesUri(featurePath);
-            if (found.isEmpty() && isFeature(featurePath)) {
-                throw new IllegalArgumentException("Feature not found: " + featurePath);
-            }
-            found.forEach(builder::addUnique);
-        }
-
-        return builder.build();
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
-        if (s.equals("Go")) {
-            // set the text and release the get()
-//            this.currentText = this.textArea.getText();
+        if (s.equals("Execute")) {
+            // release the get()
             this.shouldReleaseGet = true;
         }
     }
