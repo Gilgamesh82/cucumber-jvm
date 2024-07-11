@@ -54,32 +54,35 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
 
     private String currentText = "";
 
-    private final JTextArea textArea;
+//    private final JTextArea textArea;
 
     private boolean shouldReleaseGet = false;
 
     private volatile boolean stop = false;
 
     public UserInputFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions, FeatureParser parser) {
-        // Create a JFrame?
-        JFrame frame = new JFrame("Gherkin Input");
-        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.addWindowListener(this);
+//        // Create a JFrame?
+//        JFrame frame = new JFrame("Gherkin Input");
+//        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+//        frame.addWindowListener(this);
+//
+//        JPanel panel = new JPanel();
+//        JButton goButton = new JButton("Go");
+//        goButton.addActionListener(this);
+//        this.textArea = new JTextArea();
+//        this.textArea.setRows(50);
+//        this.textArea.setColumns(100);
+//        JScrollPane scrollPane = new JScrollPane(this.textArea);
+//
+//        panel.add(this.textArea);
+//        panel.add(goButton);
+//        frame.add(panel);
+//
+//        frame.pack();
+//        frame.setVisible(true);
 
-        JPanel panel = new JPanel();
-        JButton goButton = new JButton("Go");
-        goButton.addActionListener(this);
-        this.textArea = new JTextArea();
-        this.textArea.setRows(50);
-        this.textArea.setColumns(100);
-        JScrollPane scrollPane = new JScrollPane(this.textArea);
-
-        panel.add(this.textArea);
-        panel.add(goButton);
-        frame.add(panel);
-
-        frame.pack();
-        frame.setVisible(true);
+        UserInputFeatureSupplierForm form = new UserInputFeatureSupplierForm();
+        form.setVisible(true);
 
         this.featureScanner = new ResourceScanner<>(
                 classLoader,
@@ -187,7 +190,7 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         String s = e.getActionCommand();
         if (s.equals("Go")) {
             // set the text and release the get()
-            this.currentText = this.textArea.getText();
+//            this.currentText = this.textArea.getText();
             this.shouldReleaseGet = true;
         }
     }
