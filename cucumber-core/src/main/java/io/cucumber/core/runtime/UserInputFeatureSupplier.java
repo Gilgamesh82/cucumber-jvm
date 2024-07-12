@@ -17,10 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
@@ -87,17 +84,19 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
         // Grab the text and run it as a feature
         String finalText = this.form.gherkinTextArea.getText();
 
+        String featureTag = "Feature:";
+        String scenarioTag = "Scenario:";
         boolean needsFeatureTag = false;
         boolean needsScenarioTag = false;
 
         // If the text does not have a feature, add a temp one
-        if (!finalText.contains("Feature:")) {
+        if (!finalText.contains(featureTag)) {
             // Add a temp feature tag to the beginning
             needsFeatureTag = true;
         }
 
         // If the text does not have a scenario, add a temp one
-        if (!finalText.contains("Scenario:")) {
+        if (!finalText.contains(scenarioTag)) {
             needsScenarioTag = true;
         }
 
@@ -107,10 +106,14 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
 
         String prependText = "";
         if (needsFeatureTag) {
-            prependText += "Feature: Feature_" + currentTimeAsString + System.lineSeparator();
+            prependText += featureTag + " Feature_" + currentTimeAsString + System.lineSeparator();
         }
 
         if (needsScenarioTag) {
+            // Note: we don't support cases where there is a Feature tag but not a Scenario tag
+            if (!needsFeatureTag) {
+                throw new IllegalArgumentException(" Gherkin text that has a feature tag but no scenario tag is not supported.");
+            }
             prependText += "Scenario: Scenario_" + currentTimeAsString + System.lineSeparator();
         }
 
