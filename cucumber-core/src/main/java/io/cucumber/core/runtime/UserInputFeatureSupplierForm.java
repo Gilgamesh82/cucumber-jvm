@@ -4,12 +4,17 @@
  */
 package io.cucumber.core.runtime;
 
-import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import javax.swing.JFileChooser;
+import java.util.Objects;
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -18,6 +23,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
 
     private UserInputFeatureSupplier supplier = null;
+    private String folderRoot;
+    private String scenarioTagText;
 
     /**
      * Creates new form UserInputFeatureSupplierForm
@@ -36,27 +43,77 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setGherkinFolderMenu = new javax.swing.JPopupMenu();
-        setGherkinFolderButtonMenuItem = new javax.swing.JMenuItem();
+        scenarioTagDialog = new javax.swing.JDialog();
+        scenarioTagLabel = new javax.swing.JLabel();
+        scenarioTagTextField = new javax.swing.JTextField();
+        scenarioTagOKButton = new javax.swing.JButton();
+        scenarioTagCancelButton = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         gherkinTextAreaScrollPane = new javax.swing.JScrollPane();
         gherkinTextArea = new javax.swing.JTextArea();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        gherkinFolderTree = new javax.swing.JTree();
+        fileTreePanel = new javax.swing.JPanel();
+        fileTreeScrollPane = new javax.swing.JScrollPane();
+        gherkinFileFolderTree = new javax.swing.JTree();
         executeButton = new javax.swing.JButton();
-        loadFileButton = new javax.swing.JButton();
+        menuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        loadMenuItem = new javax.swing.JMenuItem();
+        settingsMenu = new javax.swing.JMenu();
+        setScenarioTagMenuItem = new javax.swing.JMenuItem();
+        setGherkinFolderButtonMenuItem = new javax.swing.JMenuItem();
+        exitMenuItem = new javax.swing.JMenuItem();
 
-        setGherkinFolderButtonMenuItem.setText("Set Gherkin Folder");
-        setGherkinFolderButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        scenarioTagDialog.setResizable(false);
+
+        scenarioTagLabel.setText("Scenario Tag");
+
+        scenarioTagOKButton.setText("OK");
+        scenarioTagOKButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setGherkinFolderButtonMenuItemActionPerformed(evt);
+                scenarioTagOKButtonActionPerformed(evt);
             }
         });
-        setGherkinFolderMenu.add(setGherkinFolderButtonMenuItem);
+
+        scenarioTagCancelButton.setText("Cancel");
+        scenarioTagCancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scenarioTagCancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout scenarioTagDialogLayout = new javax.swing.GroupLayout(scenarioTagDialog.getContentPane());
+        scenarioTagDialog.getContentPane().setLayout(scenarioTagDialogLayout);
+        scenarioTagDialogLayout.setHorizontalGroup(
+            scenarioTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scenarioTagDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(scenarioTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(scenarioTagDialogLayout.createSequentialGroup()
+                        .addComponent(scenarioTagLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scenarioTagTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, scenarioTagDialogLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(scenarioTagOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scenarioTagCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        scenarioTagDialogLayout.setVerticalGroup(
+            scenarioTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scenarioTagDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(scenarioTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(scenarioTagLabel)
+                    .addComponent(scenarioTagTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(scenarioTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(scenarioTagOKButton)
+                    .addComponent(scenarioTagCancelButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -76,12 +133,14 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(gherkinTextAreaScrollPane);
 
-        gherkinFolderTree.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                gherkinFolderTreeMouseReleased(evt);
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Set Gherkin root folder in File->Settings");
+        gherkinFileFolderTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        gherkinFileFolderTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                gherkinFileFolderTreeValueChanged(evt);
             }
         });
-        jScrollPane1.setViewportView(gherkinFolderTree);
+        fileTreeScrollPane.setViewportView(gherkinFileFolderTree);
 
         executeButton.setText("Execute");
         executeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -90,35 +149,69 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
             }
         });
 
-        loadFileButton.setText("Load File");
-        loadFileButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadFileButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout fileTreePanelLayout = new javax.swing.GroupLayout(fileTreePanel);
+        fileTreePanel.setLayout(fileTreePanelLayout);
+        fileTreePanelLayout.setHorizontalGroup(
+            fileTreePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+            .addGroup(fileTreePanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(loadFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(executeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+        fileTreePanelLayout.setVerticalGroup(
+            fileTreePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fileTreePanelLayout.createSequentialGroup()
+                .addComponent(fileTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(executeButton)
-                    .addComponent(loadFileButton)))
+                .addComponent(executeButton))
         );
 
-        jSplitPane1.setRightComponent(jPanel1);
+        jSplitPane1.setRightComponent(fileTreePanel);
+
+        fileMenu.setText("File");
+        fileMenu.setPreferredSize(new java.awt.Dimension(36, 22));
+
+        loadMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        loadMenuItem.setText("Load");
+        loadMenuItem.setPreferredSize(new java.awt.Dimension(200, 22));
+        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(loadMenuItem);
+
+        settingsMenu.setText("Settings");
+
+        setScenarioTagMenuItem.setText("Set Scenario Tag");
+        setScenarioTagMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setScenarioTagMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(setScenarioTagMenuItem);
+
+        setGherkinFolderButtonMenuItem.setText("Set Gherkin Folder");
+        setGherkinFolderButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setGherkinFolderButtonMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(setGherkinFolderButtonMenuItem);
+
+        fileMenu.add(settingsMenu);
+
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuItem);
+
+        menuBar.add(fileMenu);
+
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -126,7 +219,7 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -144,11 +237,49 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
         this.supplier.actionPerformed(evt);
     }//GEN-LAST:event_executeButtonActionPerformed
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+    private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         this.supplier.windowClosing(evt);
     }//GEN-LAST:event_formWindowClosing
 
-    private void loadFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private static void buildFileTree(File dir, DefaultMutableTreeNode node) {
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(file.getName());
+            node.add(childNode);
+            if (file.isDirectory()) {
+                buildFileTree(file, childNode);
+            }
+        }
+    }
+
+    private void setGherkinFolderButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setGherkinFolderButtonMenuItemActionPerformed
+        JFileChooser folderChooser = new JFileChooser();
+        folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        folderChooser.setAcceptAllFileFilterUsed(false);
+        int result = folderChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Set the tree view to the selected directory
+            this.folderRoot = folderChooser.getSelectedFile().getPath();
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+            buildFileTree(folderChooser.getSelectedFile(), root);
+            this.gherkinFileFolderTree.setModel(new DefaultTreeModel(root));
+        }
+    }//GEN-LAST:event_setGherkinFolderButtonMenuItemActionPerformed
+
+    private void gherkinFileFolderTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_gherkinFileFolderTreeValueChanged
+        // Convert the event treepath to a file path
+        String file = getPathFromTreeNode(evt);
+        if (file.endsWith(".feature")) {
+            try {
+                gherkinTextArea.setText(new String(Files.readAllBytes(Paths.get(this.folderRoot + file))));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            gherkinTextArea.setText("");
+        }
+    }//GEN-LAST:event_gherkinFileFolderTreeValueChanged
+
+    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadMenuItemActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Feature File", "feature"));
         int result = fileChooser.showOpenDialog(this);
@@ -160,35 +291,54 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
                 throw new RuntimeException(e);
             }
             this.gherkinTextArea.setText(fileContents);
+            this.gherkinFileFolderTree.setSelectionPath(null);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_loadMenuItemActionPerformed
 
-    private void setGherkinFolderButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setGherkinFolderButtonMenuItemActionPerformed
-        JFileChooser folderChooser = new JFileChooser();
-        folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        folderChooser.setAcceptAllFileFilterUsed(false);
-        int result = folderChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            // Set the tree view to the selected directory
-        }
-    }//GEN-LAST:event_setGherkinFolderButtonMenuItemActionPerformed
+    private void setScenarioTagMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setScenarioTagMenuItemActionPerformed
+        this.scenarioTagDialog.setVisible(true);
+    }//GEN-LAST:event_setScenarioTagMenuItemActionPerformed
 
-    private void gherkinFolderTreeMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_gherkinFolderTreeMouseReleased
-        if (evt.getButton() == MouseEvent.BUTTON3) {
-            this.setGherkinFolderMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-        }
-    }//GEN-LAST:event_gherkinFolderTreeMouseReleased
+    private void scenarioTagOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scenarioTagOKButtonActionPerformed
+        this.scenarioTagText = this.scenarioTagTextField.getText();
+    }//GEN-LAST:event_scenarioTagOKButtonActionPerformed
+
+    private void scenarioTagCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scenarioTagCancelButtonActionPerformed
+        this.scenarioTagDialog.setVisible(false);
+    }//GEN-LAST:event_scenarioTagCancelButtonActionPerformed
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        // Close the application
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private static String getPathFromTreeNode(TreeSelectionEvent evt) {
+        return evt.getPath().toString().replace(
+            "[", "").replace(
+            "]", "").replace(
+            ", ", File.separator).replace(
+            " ", "");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton executeButton;
-    private javax.swing.JTree gherkinFolderTree;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JPanel fileTreePanel;
+    private javax.swing.JScrollPane fileTreeScrollPane;
+    private javax.swing.JTree gherkinFileFolderTree;
     public javax.swing.JTextArea gherkinTextArea;
     private javax.swing.JScrollPane gherkinTextAreaScrollPane;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JButton loadFileButton;
+    private javax.swing.JMenuItem loadMenuItem;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton scenarioTagCancelButton;
+    private javax.swing.JDialog scenarioTagDialog;
+    private javax.swing.JLabel scenarioTagLabel;
+    private javax.swing.JButton scenarioTagOKButton;
+    private javax.swing.JTextField scenarioTagTextField;
     private javax.swing.JMenuItem setGherkinFolderButtonMenuItem;
-    private javax.swing.JPopupMenu setGherkinFolderMenu;
+    private javax.swing.JMenuItem setScenarioTagMenuItem;
+    private javax.swing.JMenu settingsMenu;
     // End of variables declaration//GEN-END:variables
 }

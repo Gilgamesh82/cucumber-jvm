@@ -24,13 +24,6 @@ import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
-//public final class UserInputFeatureSupplier implements FeatureSupplier {
-//    @Override
-//    public List<Feature> get() {
-//        return List.of();
-//    }
-//}
-
 public final class UserInputFeatureSupplier implements FeatureSupplier, ActionListener, WindowListener {
 
     public String currentGherkinText = "";
@@ -39,7 +32,6 @@ public final class UserInputFeatureSupplier implements FeatureSupplier, ActionLi
 
     private final ResourceScanner<Feature> featureScanner;
 
-//    private final JTextArea textArea;
     private UserInputFeatureSupplierForm form = null;
 
     private boolean shouldReleaseGet = false;
