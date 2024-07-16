@@ -63,6 +63,8 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
         setGherkinFolderButtonMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
 
+        scenarioTagDialog.setTitle("Set Scenario Tag");
+        scenarioTagDialog.setModal(true);
         scenarioTagDialog.setResizable(false);
 
         scenarioTagLabel.setText("Scenario Tag");
@@ -91,7 +93,7 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
                     .addGroup(scenarioTagDialogLayout.createSequentialGroup()
                         .addComponent(scenarioTagLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(scenarioTagTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                        .addComponent(scenarioTagTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, scenarioTagDialogLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(scenarioTagOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -114,6 +116,7 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("User Input Feature Supplier");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -296,11 +299,13 @@ public class UserInputFeatureSupplierForm extends javax.swing.JFrame {
     }//GEN-LAST:event_loadMenuItemActionPerformed
 
     private void setScenarioTagMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setScenarioTagMenuItemActionPerformed
+        this.scenarioTagDialog.pack();
         this.scenarioTagDialog.setVisible(true);
     }//GEN-LAST:event_setScenarioTagMenuItemActionPerformed
 
     private void scenarioTagOKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scenarioTagOKButtonActionPerformed
         this.scenarioTagText = this.scenarioTagTextField.getText();
+        this.scenarioTagDialog.setVisible(false);
     }//GEN-LAST:event_scenarioTagOKButtonActionPerformed
 
     private void scenarioTagCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scenarioTagCancelButtonActionPerformed
